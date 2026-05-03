@@ -23,10 +23,6 @@ class Main extends Phaser.Scene {
 
     this.load.image("newgame", "New Game Button.png");
 
-    for (let i = 0; i <= 9; i++) {
-      this.load.image(`${i}`, `${i}.png`);
-    }
-
     for (const fruit of fruits) {
       this.load.image(`${fruit.name}`, `${fruit.name}.png`);
     }
@@ -77,16 +73,7 @@ class Main extends Phaser.Scene {
   }
 
   drawScore() {
-    this.renderTexture.clear();
-    const textWidth = this.score
-      .toString()
-      .split("")
-      .reduce((acc, c) => acc + this.textures.get(c).get().width, 0);
-    let x = this.renderTexture.width / 2 - textWidth / 2;
-    for (const c of this.score.toString()) {
-      this.renderTexture.drawFrame(c, undefined, x, 0);
-      x += this.textures.get(c).get().width;
-    }
+    this.scoreText.setText(this.score.toString());
   }
 
   create() {
@@ -126,14 +113,15 @@ class Main extends Phaser.Scene {
       emitting: false,
     });
 
-    this.renderTexture = this.add
-      .renderTexture(
-        +this.game.config.width / 2,
-        150,
-        +this.game.config.width,
-        100
-      )
-      .setScale(0.8);
+    this.scoreText = this.add
+      .text(+this.game.config.width / 2, 150, "0", {
+        fontSize: "64px",
+        color: "#ffffff",
+        fontStyle: "bold",
+        stroke: "#000000",
+        strokeThickness: 6,
+      })
+      .setOrigin(0.5, 0.5);
     this.drawScore();
 
     const button = this.add
