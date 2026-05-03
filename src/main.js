@@ -1,6 +1,6 @@
 
 const fruits = [
-  { name: "fruit1", radius: 30 },
+  { name: "fruit01", radius: 30 },
   { name: "fruit2", radius: 35 },
   { name: "fruit3", radius: 40 },
   { name: "fruit4", radius: 50 },
