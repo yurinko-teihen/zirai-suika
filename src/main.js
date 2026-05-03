@@ -1,6 +1,3 @@
-import "./style.css";
-
-import Phaser from "phaser";
 
 const fruits = [
   { name: "fruit1", radius: 30 },
@@ -21,6 +18,7 @@ class Main extends Phaser.Scene {
   gameOver = false;
 
   preload() {
+    this.load.path = "public/";
     this.load.image("headstone", "Headstone.png");
 
     this.load.image("newgame", "New Game Button.png");
