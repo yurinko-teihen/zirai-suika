@@ -2,12 +2,7 @@ import "./style.css";
 
 import Phaser from "phaser";
 
-type Fruit = {
-  name: string;
-  radius: number;
-};
-
-const fruits: Fruit[] = [
+const fruits = [
   { name: "fruit1", radius: 30 },
   { name: "fruit2", radius: 35 },
   { name: "fruit3", radius: 40 },
@@ -23,11 +18,7 @@ const fruits: Fruit[] = [
 
 class Main extends Phaser.Scene {
   score = 0;
-  dropper!: Phaser.GameObjects.Image;
-  group!: Phaser.GameObjects.Group;
-  ceiling!: MatterJS.BodyType;
   gameOver = false;
-  renderTexture!: Phaser.GameObjects.RenderTexture;
 
   preload() {
     this.load.image("headstone", "Headstone.png");
@@ -43,7 +34,7 @@ class Main extends Phaser.Scene {
     }
   }
 
-  updateDropper(fruit: Fruit) {
+  updateDropper(fruit) {
     this.dropper
       .setTexture(fruit.name)
       .setName(fruit.name)
@@ -62,7 +53,7 @@ class Main extends Phaser.Scene {
     });
   }
 
-  setDropperX(x: number) {
+  setDropperX(x) {
     const p = 65;
     const r = this.dropper.displayWidth / 2;
     if (x < r + p) {
@@ -73,7 +64,7 @@ class Main extends Phaser.Scene {
     this.dropper.setX(x);
   }
 
-  addFruit(x: number, y: number, fruit: Fruit) {
+  addFruit(x, y, fruit) {
     return this.matter.add
       .image(x, y, fruit.name)
       .setName(fruit.name)
@@ -213,7 +204,7 @@ class Main extends Phaser.Scene {
     line.postFX.addShine();
     line.postFX.addGlow();
 
-    this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
+    this.input.on("pointermove", (pointer) => {
       this.setDropperX(pointer.x);
       light.setPosition(pointer.x, pointer.y);
     });
@@ -228,7 +219,7 @@ class Main extends Phaser.Scene {
 
       const currentFruit = fruits.find(
         (fruit) => fruit.name === this.dropper.name
-      )!;
+      );
 
       const gameObject = this.addFruit(
         this.dropper.x,
@@ -241,50 +232,47 @@ class Main extends Phaser.Scene {
       this.updateDropper(nextFruit);
     });
 
-    this.matter.world.on(
-      "collisionstart",
-      (event: Phaser.Physics.Matter.Events.CollisionStartEvent) => {
-        for (const pair of event.pairs) {
-          if (pair.bodyA.gameObject?.name === pair.bodyB.gameObject?.name) {
-            const fruitIndex = fruits.findIndex(
-              (fruit) => fruit.name === pair.bodyA.gameObject?.name
-            );
+    this.matter.world.on("collisionstart", (event) => {
+      for (const pair of event.pairs) {
+        if (pair.bodyA.gameObject?.name === pair.bodyB.gameObject?.name) {
+          const fruitIndex = fruits.findIndex(
+            (fruit) => fruit.name === pair.bodyA.gameObject?.name
+          );
 
-            if (fruitIndex === -1) {
-              continue;
-            }
-
-            this.score += (fruitIndex + 1) * 2;
-            this.drawScore();
-
-            pair.bodyA.gameObject.destroy();
-            pair.bodyB.gameObject.destroy();
-
-            emitter.setTexture(fruits[fruitIndex].name);
-            emitter.emitParticleAt(
-              pair.bodyB.position.x,
-              pair.bodyB.position.y,
-              10
-            );
-
-            const newFruit = fruits[fruitIndex + 1];
-
-            if (!newFruit) {
-              continue;
-            }
-
-            const gameObject = this.addFruit(
-              pair.bodyB.position.x,
-              pair.bodyB.position.y,
-              newFruit
-            );
-            this.group.add(gameObject);
-
-            return;
+          if (fruitIndex === -1) {
+            continue;
           }
+
+          this.score += (fruitIndex + 1) * 2;
+          this.drawScore();
+
+          pair.bodyA.gameObject.destroy();
+          pair.bodyB.gameObject.destroy();
+
+          emitter.setTexture(fruits[fruitIndex].name);
+          emitter.emitParticleAt(
+            pair.bodyB.position.x,
+            pair.bodyB.position.y,
+            10
+          );
+
+          const newFruit = fruits[fruitIndex + 1];
+
+          if (!newFruit) {
+            continue;
+          }
+
+          const gameObject = this.addFruit(
+            pair.bodyB.position.x,
+            pair.bodyB.position.y,
+            newFruit
+          );
+          this.group.add(gameObject);
+
+          return;
         }
       }
-    );
+    });
 
     this.events.on("ceilinghit", () => {
       this.gameOver = true;
