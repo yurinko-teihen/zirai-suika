@@ -71,7 +71,7 @@ class Main extends Phaser.Scene {
       .setName(fruit.name)
       .setDisplaySize(fruit.radius * 2, fruit.radius * 2)
       .setY(dropperY);
-    // Position zirai_chan so the fruit appears at its lower-left
+    // Position zirai_chan so its bottom edge aligns with the fruit dropper (fruit at lower-left of zirai_chan)
     this.ziraiChan.setY(dropperY - ZIRAI_CHAN_SIZE / 2);
     this.setDropperX(this.input.activePointer.x);
 
@@ -100,7 +100,7 @@ class Main extends Phaser.Scene {
       x = +this.game.config.width - r - p;
     }
     this.dropper.setX(x);
-    // zirai_chan is to the upper-right of the fruit so fruit is at lower-left of zirai_chan
+    // Position zirai_chan so its left edge aligns with the dropper (fruit at lower-left of zirai_chan)
     this.ziraiChan.setX(x + ZIRAI_CHAN_SIZE / 2);
   }
 
