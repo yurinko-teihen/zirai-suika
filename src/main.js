@@ -27,6 +27,33 @@ class Main extends Phaser.Scene {
   nextFruitItem = null;
 
   preload() {
+    const { width, height } = this.cameras.main;
+
+    const progressBox = this.add.graphics();
+    progressBox.fillStyle(0x222222, 0.8);
+    progressBox.fillRect(width / 2 - 160, height / 2 - 25, 320, 50);
+
+    const progressBar = this.add.graphics();
+
+    const loadingText = this.add
+      .text(width / 2, height / 2 - 55, "Loading...", {
+        fontSize: "18px",
+        color: "#ffffff",
+      })
+      .setOrigin(0.5, 0.5);
+
+    this.load.on("progress", (value) => {
+      progressBar.clear();
+      progressBar.fillStyle(0xaaaaff, 1);
+      progressBar.fillRect(width / 2 - 150, height / 2 - 15, 300 * value, 30);
+    });
+
+    this.load.on("complete", () => {
+      progressBar.destroy();
+      progressBox.destroy();
+      loadingText.destroy();
+    });
+
     this.load.path = "public/";
     this.load.image("newgame", "New Game Button.png");
 
