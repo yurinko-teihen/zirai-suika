@@ -13,14 +13,21 @@ const fruits = [
   { name: "fruit11", radius: 120 },
 ];
 
+const VERSION = "v0.0.0";
+const MAX_INITIAL_FRUIT_INDEX = 5;
+
+const FRAME_LEFT = 65;
+const FRAME_TOP = 200;
+const FRAME_WIDTH = 470;
+const FRAME_HEIGHT = 798;
+
 class Main extends Phaser.Scene {
   score = 0;
   gameOver = false;
+  nextFruitItem = null;
 
   preload() {
     this.load.path = "public/";
-    this.load.image("headstone", "Headstone.png");
-
     this.load.image("newgame", "New Game Button.png");
 
     for (const fruit of fruits) {
@@ -33,7 +40,7 @@ class Main extends Phaser.Scene {
       .setTexture(fruit.name)
       .setName(fruit.name)
       .setDisplaySize(fruit.radius * 2, fruit.radius * 2)
-      .setY(fruit.radius + 205);
+      .setY(fruit.radius + FRAME_TOP + 5);
     this.setDropperX(this.input.activePointer.x);
 
     this.group.getChildren().forEach((gameObject) => {
@@ -45,6 +52,11 @@ class Main extends Phaser.Scene {
         }
       }
     });
+  }
+
+  updateNextPanel(fruit) {
+    const size = Math.min(fruit.radius * 2, 80);
+    this.nextFruitImage.setTexture(fruit.name).setDisplaySize(size, size);
   }
 
   setDropperX(x) {
@@ -77,31 +89,71 @@ class Main extends Phaser.Scene {
   }
 
   create() {
-    this.add
-      .nineslice(0, 0, "headstone")
-      .setOrigin(0)
-      .setDisplaySize(+this.game.config.width, +this.game.config.height)
-      .setPipeline("Light2D")
-      .setDepth(-2);
+    // --- Game frame (canvas border) ---
+    const graphics = this.add.graphics();
+    graphics.fillStyle(0x000000, 0.15);
+    graphics.fillRect(FRAME_LEFT, FRAME_TOP, FRAME_WIDTH, FRAME_HEIGHT);
+    graphics.lineStyle(3, 0xccccff, 0.8);
+    graphics.strokeRect(FRAME_LEFT, FRAME_TOP, FRAME_WIDTH, FRAME_HEIGHT);
+    graphics.setDepth(-2);
 
+    // --- Score panel ---
+    const scorePanel = this.add.graphics();
+    scorePanel.fillStyle(0x000000, 0.45);
+    scorePanel.fillRoundedRect(80, 15, 210, 100, 12);
+    scorePanel.lineStyle(2, 0xccccff, 0.7);
+    scorePanel.strokeRoundedRect(80, 15, 210, 100, 12);
+
+    this.add.text(185, 28, "SCORE", {
+      fontSize: "14px",
+      color: "#aaaaff",
+      fontStyle: "bold",
+    }).setOrigin(0.5, 0);
+
+    this.scoreText = this.add
+      .text(185, 80, "0", {
+        fontSize: "42px",
+        color: "#ffffff",
+        fontStyle: "bold",
+        stroke: "#000000",
+        strokeThickness: 5,
+      })
+      .setOrigin(0.5, 0.5);
+    this.drawScore();
+
+    // --- Next panel ---
+    const nextPanel = this.add.graphics();
+    nextPanel.fillStyle(0x000000, 0.45);
+    nextPanel.fillRoundedRect(390, 15, 145, 155, 12);
+    nextPanel.lineStyle(2, 0xccccff, 0.7);
+    nextPanel.strokeRoundedRect(390, 15, 145, 155, 12);
+
+    this.add.text(462, 28, "NEXT", {
+      fontSize: "14px",
+      color: "#aaaaff",
+      fontStyle: "bold",
+    }).setOrigin(0.5, 0);
+
+    this.nextFruitItem = fruits[Math.floor(Math.random() * MAX_INITIAL_FRUIT_INDEX)];
+    const initNextSize = Math.min(this.nextFruitItem.radius * 2, 80);
+    this.nextFruitImage = this.add
+      .image(462, 110, this.nextFruitItem.name)
+      .setDisplaySize(initNextSize, initNextSize);
+
+    // --- Version info ---
+    this.add.text(590, 193, VERSION, {
+      fontSize: "11px",
+      color: "#556677",
+    }).setOrigin(1, 1);
+
+    // --- Physics setup ---
     this.matter.world.setBounds(
-      65,
+      FRAME_LEFT,
       0,
-      +this.game.config.width - 130,
+      FRAME_WIDTH,
       +this.game.config.height - 1
     );
     this.group = this.add.group();
-
-    const light = this.lights
-      .addLight(
-        this.input.activePointer.x,
-        this.input.activePointer.y,
-        1000,
-        0x99ffff,
-        0.75
-      )
-      .setScrollFactor(0);
-    this.lights.enable().setAmbientColor(0xdddddd);
 
     const emitter = this.add.particles(0, 0, fruits[0].name, {
       lifespan: 1000,
@@ -112,17 +164,6 @@ class Main extends Phaser.Scene {
       gravityY: 200,
       emitting: false,
     });
-
-    this.scoreText = this.add
-      .text(+this.game.config.width / 2, 150, "0", {
-        fontSize: "64px",
-        color: "#ffffff",
-        fontStyle: "bold",
-        stroke: "#000000",
-        strokeThickness: 6,
-      })
-      .setOrigin(0.5, 0.5);
-    this.drawScore();
 
     const button = this.add
       .image(
@@ -182,17 +223,17 @@ class Main extends Phaser.Scene {
     );
     this.ceiling.isStatic = true;
 
+    // Drop line with shine effect
     const line = this.add
-      .rectangle(160, 200, +this.game.config.width - 320, 2, 0xccccff)
+      .rectangle(FRAME_LEFT, FRAME_TOP, FRAME_WIDTH, 2, 0xccccff)
       .setOrigin(0)
-      .setAlpha(0.1)
-      .setDepth(-2);
+      .setAlpha(0.15)
+      .setDepth(-1);
     line.postFX.addShine();
     line.postFX.addGlow();
 
     this.input.on("pointermove", (pointer) => {
       this.setDropperX(pointer.x);
-      light.setPosition(pointer.x, pointer.y);
     });
 
     this.input.on("pointerup", () => {
@@ -214,8 +255,10 @@ class Main extends Phaser.Scene {
       );
       this.group.add(gameObject);
 
-      const nextFruit = fruits[Math.floor(Math.random() * 5)];
-      this.updateDropper(nextFruit);
+      const prevNextFruit = this.nextFruitItem;
+      this.nextFruitItem = fruits[Math.floor(Math.random() * MAX_INITIAL_FRUIT_INDEX)];
+      this.updateDropper(prevNextFruit);
+      this.updateNextPanel(this.nextFruitItem);
     });
 
     this.matter.world.on("collisionstart", (event) => {
