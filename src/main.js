@@ -14,6 +14,7 @@ const fruits = [
 ];
 
 const VERSION = "v0.0.0";
+const MAX_INITIAL_FRUIT_INDEX = 5;
 
 const FRAME_LEFT = 65;
 const FRAME_TOP = 200;
@@ -133,7 +134,7 @@ class Main extends Phaser.Scene {
       fontStyle: "bold",
     }).setOrigin(0.5, 0);
 
-    this.nextFruitItem = fruits[Math.floor(Math.random() * 5)];
+    this.nextFruitItem = fruits[Math.floor(Math.random() * MAX_INITIAL_FRUIT_INDEX)];
     const initNextSize = Math.min(this.nextFruitItem.radius * 2, 80);
     this.nextFruitImage = this.add
       .image(462, 110, this.nextFruitItem.name)
@@ -255,7 +256,7 @@ class Main extends Phaser.Scene {
       this.group.add(gameObject);
 
       const prevNextFruit = this.nextFruitItem;
-      this.nextFruitItem = fruits[Math.floor(Math.random() * 5)];
+      this.nextFruitItem = fruits[Math.floor(Math.random() * MAX_INITIAL_FRUIT_INDEX)];
       this.updateDropper(prevNextFruit);
       this.updateNextPanel(this.nextFruitItem);
     });
