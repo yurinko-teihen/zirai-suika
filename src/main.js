@@ -26,6 +26,7 @@ class Main extends Phaser.Scene {
   score = 0;
   gameOver = false;
   nextFruitItem = null;
+  ceilingHitTimer = null;
 
   preload() {
     const { width, height } = this.cameras.main;
@@ -228,6 +229,7 @@ class Main extends Phaser.Scene {
     button.on("pointerup", () => {
       this.score = 0;
       this.gameOver = false;
+      this.ceilingHitTimer = null;
       this.scene.restart();
     });
 
@@ -347,10 +349,22 @@ class Main extends Phaser.Scene {
     });
 
     this.events.on("ceilinghit", () => {
-      this.gameOver = true;
-      button.setVisible(true);
-      this.dropper.setVisible(false);
-      this.ziraiChan.setVisible(false);
+      if (this.gameOver || this.ceilingHitTimer) return;
+
+      this.ceilingHitTimer = this.time.delayedCall(1000, () => {
+        const isStillOverCeiling = this.group.getChildren().some((obj) => {
+          const fruitData = fruits.find((f) => f.name === obj.name);
+          return fruitData && obj.y - fruitData.radius < FRAME_TOP;
+        });
+
+        if (isStillOverCeiling) {
+          this.gameOver = true;
+          button.setVisible(true);
+          this.dropper.setVisible(false);
+          this.ziraiChan.setVisible(false);
+        }
+        this.ceilingHitTimer = null;
+      });
     });
   }
 }
