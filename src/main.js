@@ -1,24 +1,24 @@
 
 const fruits = [
-  { name: "fruit01", radius: 30 },
-  { name: "fruit02", radius: 35 },
-  { name: "fruit03", radius: 40 },
-  { name: "fruit04", radius: 50 },
-  { name: "fruit5", radius: 65 },
-  { name: "fruit6", radius: 70 },
-  { name: "fruit7", radius: 80 },
-  { name: "fruit8", radius: 90 },
-  { name: "fruit9", radius: 100 },
-  { name: "fruit10", radius: 110 },
-  { name: "fruit11", radius: 120 },
+  { name: "fruit01", radius: 28 },
+  { name: "fruit02", radius: 33 },
+  { name: "fruit03", radius: 38 },
+  { name: "fruit04", radius: 47 },
+  { name: "fruit5", radius: 62 },
+  { name: "fruit6", radius: 66 },
+  { name: "fruit7", radius: 76 },
+  { name: "fruit8", radius: 85 },
+  { name: "fruit9", radius: 95 },
+  { name: "fruit10", radius: 104 },
+  { name: "fruit11", radius: 114 },
 ];
 
-const VERSION = "v0.0.1";
+const VERSION = "v0.0.2";
 const MAX_INITIAL_FRUIT_INDEX = 5;
 const ZIRAI_CHAN_SIZE = 100;
 
 const FRAME_LEFT = 65;
-const FRAME_TOP = 200;
+const FRAME_TOP = 175;
 const FRAME_WIDTH = 470;
 const FRAME_HEIGHT = 798;
 
@@ -175,10 +175,10 @@ class Main extends Phaser.Scene {
       .setDisplaySize(initNextSize, initNextSize);
 
     // --- Version info ---
-    this.add.text(590, 193, VERSION, {
+    this.add.text(597, 5, VERSION, {
       fontSize: "11px",
       color: "#556677",
-    }).setOrigin(1, 1);
+    }).setOrigin(1, 0);
 
     // --- Physics setup ---
     this.matter.world.setBounds(
@@ -256,9 +256,9 @@ class Main extends Phaser.Scene {
 
     this.ceiling = this.matter.add.rectangle(
       +this.game.config.width / 2,
-      100,
+      FRAME_TOP / 2,
       +this.game.config.width,
-      200
+      FRAME_TOP
     );
     this.ceiling.isStatic = true;
 
