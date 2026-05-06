@@ -3,7 +3,7 @@ const fruits = [
   { name: "fruit01", radius: 30 },
   { name: "fruit02", radius: 35 },
   { name: "fruit3", radius: 40 },
-  { name: "fruit4", radius: 50 },
+  { name: "fruit04", radius: 50 },
   { name: "fruit5", radius: 65 },
   { name: "fruit6", radius: 70 },
   { name: "fruit7", radius: 80 },
@@ -13,7 +13,7 @@ const fruits = [
   { name: "fruit11", radius: 120 },
 ];
 
-const VERSION = "v0.0.0";
+const VERSION = "v0.0.1";
 const MAX_INITIAL_FRUIT_INDEX = 5;
 const ZIRAI_CHAN_SIZE = 100;
 
