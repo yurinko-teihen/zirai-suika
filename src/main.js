@@ -4,7 +4,7 @@ const fruits = [
   { name: "fruit02", radius: 33 },
   { name: "fruit03", radius: 38 },
   { name: "fruit04", radius: 47 },
-  { name: "fruit5", radius: 62 },
+  { name: "fruit05", radius: 62 },
   { name: "fruit6", radius: 66 },
   { name: "fruit7", radius: 76 },
   { name: "fruit8", radius: 85 },
