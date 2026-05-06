@@ -281,7 +281,6 @@ class Main extends Phaser.Scene {
       }
 
       this.dropper.setVisible(false);
-      this.ziraiChan.setVisible(false);
       this.time.delayedCall(500, () => {
         const show = !this.gameOver;
         this.dropper.setVisible(show);
