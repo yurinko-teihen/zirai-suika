@@ -15,6 +15,7 @@ const fruits = [
 
 const VERSION = "v0.0.0";
 const MAX_INITIAL_FRUIT_INDEX = 5;
+const ZIRAI_CHAN_SIZE = 100;
 
 const FRAME_LEFT = 65;
 const FRAME_TOP = 200;
@@ -56,6 +57,7 @@ class Main extends Phaser.Scene {
 
     this.load.path = "public/";
     this.load.image("newgame", "New Game Button.png");
+    this.load.image("zirai_chan", "zirai_chan.png");
 
     for (const fruit of fruits) {
       this.load.image(`${fruit.name}`, `${fruit.name}.png`);
@@ -63,11 +65,14 @@ class Main extends Phaser.Scene {
   }
 
   updateDropper(fruit) {
+    const dropperY = fruit.radius + FRAME_TOP + 5;
     this.dropper
       .setTexture(fruit.name)
       .setName(fruit.name)
       .setDisplaySize(fruit.radius * 2, fruit.radius * 2)
-      .setY(fruit.radius + FRAME_TOP + 5);
+      .setY(dropperY);
+    // Position zirai_chan so its bottom edge aligns with the fruit dropper (fruit at lower-left of zirai_chan)
+    this.ziraiChan.setY(dropperY - ZIRAI_CHAN_SIZE / 2);
     this.setDropperX(this.input.activePointer.x);
 
     this.group.getChildren().forEach((gameObject) => {
@@ -95,6 +100,8 @@ class Main extends Phaser.Scene {
       x = +this.game.config.width - r - p;
     }
     this.dropper.setX(x);
+    // Position zirai_chan so its left edge aligns with the dropper (fruit at lower-left of zirai_chan)
+    this.ziraiChan.setX(x + ZIRAI_CHAN_SIZE / 2);
   }
 
   addFruit(x, y, fruit) {
@@ -240,6 +247,11 @@ class Main extends Phaser.Scene {
         glow.outerStrength = tween.getValue();
       },
     });
+
+    this.ziraiChan = this.add
+      .image(0, 0, "zirai_chan")
+      .setDisplaySize(ZIRAI_CHAN_SIZE, ZIRAI_CHAN_SIZE);
+
     this.updateDropper(fruits[0]);
 
     this.ceiling = this.matter.add.rectangle(
@@ -269,7 +281,12 @@ class Main extends Phaser.Scene {
       }
 
       this.dropper.setVisible(false);
-      this.time.delayedCall(500, () => this.dropper.setVisible(!this.gameOver));
+      this.ziraiChan.setVisible(false);
+      this.time.delayedCall(500, () => {
+        const show = !this.gameOver;
+        this.dropper.setVisible(show);
+        this.ziraiChan.setVisible(show);
+      });
 
       const currentFruit = fruits.find(
         (fruit) => fruit.name === this.dropper.name
@@ -334,6 +351,7 @@ class Main extends Phaser.Scene {
       this.gameOver = true;
       button.setVisible(true);
       this.dropper.setVisible(false);
+      this.ziraiChan.setVisible(false);
     });
   }
 }
