@@ -186,7 +186,7 @@ class Main extends Phaser.Scene {
       FRAME_LEFT,
       0,
       FRAME_WIDTH,
-      +this.game.config.height - 1
+      FRAME_TOP + FRAME_HEIGHT
     );
     this.group = this.add.group();
 
