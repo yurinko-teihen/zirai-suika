@@ -342,8 +342,6 @@ class Main extends Phaser.Scene {
             newFruit
           );
           this.group.add(gameObject);
-
-          return;
         }
       }
     });
