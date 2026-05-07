@@ -8,7 +8,7 @@ const fruits = [
   { name: "fruit6", radius: 66 },
   { name: "fruit7", radius: 76 },
   { name: "fruit8", radius: 85 },
-  { name: "fruit9", radius: 95 },
+  { name: "fruit09", radius: 95 },
   { name: "fruit10", radius: 104 },
   { name: "fruit11", radius: 114 },
 ];
