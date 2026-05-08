@@ -1,16 +1,16 @@
 
 const fruits = [
-  { name: "fruit01", radius: 28 },
-  { name: "fruit02", radius: 33 },
-  { name: "fruit03", radius: 38 },
-  { name: "fruit04", radius: 47 },
-  { name: "fruit05", radius: 62 },
-  { name: "fruit06", radius: 66 },
-  { name: "fruit7", radius: 76 },
-  { name: "fruit8", radius: 85 },
-  { name: "fruit09", radius: 95 },
-  { name: "fruit10", radius: 104 },
-  { name: "fruit11", radius: 114 },
+  { name: "fruit01", radius: 28, collisionRadius: 27 },
+  { name: "fruit02", radius: 33, collisionRadius: 30 },
+  { name: "fruit03", radius: 38, collisionRadius: 38 },
+  { name: "fruit04", radius: 47, collisionRadius: 44 },
+  { name: "fruit05", radius: 62, collisionRadius: 59 },
+  { name: "fruit06", radius: 66, collisionRadius: 66 },
+  { name: "fruit7", radius: 76, collisionRadius: 76 },
+  { name: "fruit8", radius: 85, collisionRadius: 85 },
+  { name: "fruit09", radius: 95, collisionRadius: 91 },
+  { name: "fruit10", radius: 104, collisionRadius: 103 },
+  { name: "fruit11", radius: 114, collisionRadius: 114 },
 ];
 
 const VERSION = "v0.0.2";
@@ -110,7 +110,7 @@ class Main extends Phaser.Scene {
       .image(x, y, fruit.name)
       .setName(fruit.name)
       .setDisplaySize(fruit.radius * 2, fruit.radius * 2)
-      .setCircle(fruit.radius)
+      .setCircle(fruit.collisionRadius)
       .setFriction(0.005)
       .setBounce(0.2)
       .setDepth(-1)
