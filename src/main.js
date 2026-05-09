@@ -378,8 +378,6 @@ class Main extends Phaser.Scene {
           this.score += (fruitIndex + 1) * 2;
           this.drawScore();
 
-          this.mergeSound.play();
-
           pair.bodyA.gameObject.destroy();
           pair.bodyB.gameObject.destroy();
 
@@ -395,6 +393,8 @@ class Main extends Phaser.Scene {
           if (!newFruit) {
             continue;
           }
+
+          this.mergeSound.play();
 
           const gameObject = this.addFruit(
             pair.bodyB.position.x,
