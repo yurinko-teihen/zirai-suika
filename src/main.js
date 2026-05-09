@@ -71,6 +71,8 @@ class Main extends Phaser.Scene {
     for (const fruit of fruits) {
       this.load.image(`${fruit.name}`, `${fruit.name}.png`);
     }
+
+    this.load.audio("merge", "Onoma-Pop04-1(High-Dry).mp3");
   }
 
   updateDropper(fruit) {
@@ -235,6 +237,8 @@ class Main extends Phaser.Scene {
       color: "#556677",
     }).setOrigin(1, 0);
 
+    this.mergeSound = this.sound.add("merge");
+
     // --- Physics setup ---
     this.matter.world.setBounds(
       FRAME_LEFT,
@@ -373,6 +377,8 @@ class Main extends Phaser.Scene {
 
           this.score += (fruitIndex + 1) * 2;
           this.drawScore();
+
+          this.mergeSound.play();
 
           pair.bodyA.gameObject.destroy();
           pair.bodyB.gameObject.destroy();
