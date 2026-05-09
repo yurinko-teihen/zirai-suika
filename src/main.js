@@ -22,6 +22,8 @@ const FRAME_TOP = 175;
 const FRAME_WIDTH = 470;
 const FRAME_HEIGHT = 798;
 
+const HIGH_SCORE_KEY = "zirai_suika_highscore";
+
 class Main extends Phaser.Scene {
   score = 0;
   gameOver = false;
@@ -348,6 +350,77 @@ class Main extends Phaser.Scene {
       }
     });
 
+    // --- Game over overlay ---
+    const { width, height } = this.cameras.main;
+
+    const overlay = this.add.graphics().setVisible(false);
+    overlay.fillStyle(0x000000, 0.7);
+    overlay.fillRoundedRect(width / 2 - 160, height / 2 - 160, 320, 300, 18);
+    overlay.lineStyle(2, 0xccccff, 0.8);
+    overlay.strokeRoundedRect(width / 2 - 160, height / 2 - 160, 320, 300, 18);
+
+    const gameOverText = this.add
+      .text(width / 2, height / 2 - 120, "GAME OVER", {
+        fontSize: "32px",
+        color: "#ff6666",
+        fontStyle: "bold",
+        stroke: "#000000",
+        strokeThickness: 5,
+      })
+      .setOrigin(0.5, 0)
+      .setVisible(false);
+
+    const scoreLabel = this.add
+      .text(width / 2, height / 2 - 60, "SCORE", {
+        fontSize: "14px",
+        color: "#aaaaff",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5, 0)
+      .setVisible(false);
+
+    const scoreResultText = this.add
+      .text(width / 2, height / 2 - 38, "0", {
+        fontSize: "40px",
+        color: "#ffffff",
+        fontStyle: "bold",
+        stroke: "#000000",
+        strokeThickness: 5,
+      })
+      .setOrigin(0.5, 0)
+      .setVisible(false);
+
+    const highScoreLabel = this.add
+      .text(width / 2, height / 2 + 20, "BEST", {
+        fontSize: "14px",
+        color: "#aaaaff",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5, 0)
+      .setVisible(false);
+
+    const highScoreText = this.add
+      .text(width / 2, height / 2 + 42, "0", {
+        fontSize: "34px",
+        color: "#ffee55",
+        fontStyle: "bold",
+        stroke: "#000000",
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5, 0)
+      .setVisible(false);
+
+    const newRecordText = this.add
+      .text(width / 2, height / 2 + 82, "NEW RECORD!", {
+        fontSize: "16px",
+        color: "#ffee55",
+        fontStyle: "bold",
+        stroke: "#000000",
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5, 0)
+      .setVisible(false);
+
     this.events.on("ceilinghit", () => {
       if (this.gameOver || this.ceilingHitTimer) return;
 
@@ -359,9 +432,32 @@ class Main extends Phaser.Scene {
 
         if (isStillOverCeiling) {
           this.gameOver = true;
-          button.setVisible(true);
           this.dropper.setVisible(false);
           this.ziraiChan.setVisible(false);
+
+          let prevHighScore = 0;
+          try {
+            prevHighScore = parseInt(localStorage.getItem(HIGH_SCORE_KEY) || "0", 10);
+          } catch (_e) { /* ignore */ }
+          const isNewRecord = this.score > prevHighScore;
+          const newHighScore = isNewRecord ? this.score : prevHighScore;
+          if (isNewRecord) {
+            try {
+              localStorage.setItem(HIGH_SCORE_KEY, newHighScore.toString());
+            } catch (_e) { /* ignore */ }
+          }
+
+          scoreResultText.setText(this.score.toString());
+          highScoreText.setText(newHighScore.toString());
+          newRecordText.setVisible(isNewRecord);
+
+          overlay.setVisible(true);
+          gameOverText.setVisible(true);
+          scoreLabel.setVisible(true);
+          scoreResultText.setVisible(true);
+          highScoreLabel.setVisible(true);
+          highScoreText.setVisible(true);
+          button.setY(height / 2 + 135).setVisible(true);
         }
         this.ceilingHitTimer = null;
       });
