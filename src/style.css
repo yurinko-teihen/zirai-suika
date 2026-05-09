@@ -19,12 +19,12 @@ canvas {
   top: 12px;
   right: 12px;
   z-index: 100;
-  padding: 8px 14px;
+  padding: 4px 8px;
   background: rgba(0, 0, 0, 0.55);
   color: #ccccff;
   border: 1.5px solid rgba(204, 204, 255, 0.6);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 18px;
   font-weight: bold;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
