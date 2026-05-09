@@ -7,11 +7,93 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
 canvas {
-  border-radius: 20px;
+  border-radius: 16px;
+  display: block;
 }
+
+/* ─── メインコンテナ（額縁） ─────────────────────────────────── */
+#game-container {
+  position: relative;
+
+  /* 額縁の枠線幅をカスタムプロパティで一元管理 */
+  --frame-border-width: 8px;
+
+  /* 金古美（アンティークゴールド）をイメージした二重枠線 */
+  border: var(--frame-border-width) double #8b7355;
+  border-radius: 24px;
+
+  /*
+   * box-shadow を多層重ねて金属の立体感と光沢を表現する。
+   *   外側の多層リング … 金色の縁取りと黒い輪郭を交互に積層
+   *   外側の落ち影    … 額縁全体の重厚感
+   *   内側(inset)     … ゲーム画面が額縁に沈み込む奥行き感
+   */
+  box-shadow:
+    /* 外側の層状リング（黒→金→黒の順） */
+    0 0 0 2px #2a1d0e,
+    0 0 0 4px #d4af37,
+    0 0 0 6px #2a1d0e,
+    0 0 0 8px #8b7355,
+    0 0 0 10px #2a1d0e,
+    /* 外側の落ち影 */
+    0 12px 40px rgba(0, 0, 0, 0.85),
+    0 24px 64px rgba(0, 0, 0, 0.5),
+    /* 内側シャドウ：画面が額縁の中へ沈み込むような奥行き感 */
+    inset 0 2px 6px rgba(0, 0, 0, 0.8),
+    inset 0 6px 20px rgba(0, 0, 0, 0.5),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/*
+ * コーナーガード（四隅の装飾）
+ *
+ * ::before … 左上 ＋ 右下コーナー
+ * ::after  … 右上 ＋ 左下コーナー
+ *
+ * 各擬似要素を inset: 0 で親全体に広げ、
+ * linear-gradient の background を使って
+ * 四隅それぞれに L 字型のゴールド装飾を描画する。
+ */
+#game-container::before,
+#game-container::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--frame-border-width) * -1);  /* border の外側まで広げる */
+  border-radius: 24px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* 左上 ＋ 右下 コーナーガード */
+#game-container::before {
+  background:
+    /* 左上：横線 */
+    linear-gradient(#d4af37, #d4af37) top    left  / 28px 4px  no-repeat,
+    /* 左上：縦線 */
+    linear-gradient(#d4af37, #d4af37) top    left  / 4px  28px no-repeat,
+    /* 右下：横線 */
+    linear-gradient(#d4af37, #d4af37) bottom right / 28px 4px  no-repeat,
+    /* 右下：縦線 */
+    linear-gradient(#d4af37, #d4af37) bottom right / 4px  28px no-repeat;
+}
+
+/* 右上 ＋ 左下 コーナーガード */
+#game-container::after {
+  background:
+    /* 右上：横線 */
+    linear-gradient(#d4af37, #d4af37) top    right / 28px 4px  no-repeat,
+    /* 右上：縦線 */
+    linear-gradient(#d4af37, #d4af37) top    right / 4px  28px no-repeat,
+    /* 左下：横線 */
+    linear-gradient(#d4af37, #d4af37) bottom left  / 28px 4px  no-repeat,
+    /* 左下：縦線 */
+    linear-gradient(#d4af37, #d4af37) bottom left  / 4px  28px no-repeat;
+}
+/* ──────────────────────────────────────────────────────────── */
 
 /* ランキングボタン（右上固定） */
 #ranking-btn {
