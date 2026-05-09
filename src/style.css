@@ -12,3 +12,96 @@ body {
 canvas {
   border-radius: 20px;
 }
+
+/* ランキングボタン（右上固定） */
+#ranking-btn {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 100;
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ccccff;
+  border: 1.5px solid rgba(204, 204, 255, 0.6);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+#ranking-btn:hover {
+  background: rgba(60, 60, 120, 0.75);
+  transform: scale(1.05);
+}
+
+/* モーダルオーバーレイ */
+#ranking-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.65);
+  justify-content: center;
+  align-items: center;
+}
+
+/* モーダル本体 */
+#ranking-content {
+  background: rgba(20, 20, 50, 0.95);
+  border: 2px solid rgba(204, 204, 255, 0.6);
+  border-radius: 16px;
+  padding: 32px 40px;
+  min-width: 280px;
+  text-align: center;
+  color: #ffffff;
+  box-shadow: 0 0 30px rgba(100, 100, 255, 0.4);
+}
+
+#ranking-title {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: #ccccff;
+  letter-spacing: 0.05em;
+}
+
+#ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  text-align: left;
+}
+
+#ranking-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 6px 0;
+  font-size: 16px;
+  border-bottom: 1px solid rgba(204, 204, 255, 0.15);
+}
+#ranking-list li:last-child {
+  border-bottom: none;
+}
+
+.rank-name {
+  color: #ddddff;
+}
+.rank-score {
+  color: #ffdd88;
+  font-weight: bold;
+}
+
+#ranking-close {
+  padding: 8px 28px;
+  background: rgba(80, 80, 160, 0.7);
+  color: #ffffff;
+  border: 1.5px solid rgba(204, 204, 255, 0.5);
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+#ranking-close:hover {
+  background: rgba(100, 100, 200, 0.85);
+  transform: scale(1.05);
+}

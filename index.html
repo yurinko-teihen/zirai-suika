@@ -8,6 +8,18 @@
     <link rel="stylesheet" href="src/style.css" />
   </head>
   <body>
+    <!-- Ranking button (top-right) -->
+    <button id="ranking-btn">🏆 ランキング</button>
+
+    <!-- Ranking modal overlay -->
+    <div id="ranking-modal">
+      <div id="ranking-content">
+        <h2 id="ranking-title">ランキング TOP 5</h2>
+        <ol id="ranking-list"></ol>
+        <button id="ranking-close">戻る</button>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js" integrity="sha384-p8ty80jSFxlN0Y9ZlHjOYGzfXmOSD9FkIOdP+Yc3XeiDUfkSmkd7H2bQBvZrt7AC" crossorigin="anonymous"></script>
     <!-- Firebase SDK v10 (CDN / ESM) -->
     <script type="module">
@@ -53,10 +65,23 @@
         }
       };
 
+      const rankingModal = document.getElementById('ranking-modal');
+
+      function closeRankingModal() {
+        rankingModal.style.display = 'none';
+      }
+
       /**
-       * Firestore から上位 5 件のランキングを取得してアラートで表示します。
+       * Firestore から上位 5 件のランキングを取得してモーダルで表示します。
        */
       window.showRanking = async function () {
+        const list  = document.getElementById('ranking-list');
+        const title = document.getElementById('ranking-title');
+
+        list.innerHTML = '<li style="color:#aaaaff">読み込み中...</li>';
+        title.textContent = 'ランキング TOP 5';
+        rankingModal.style.display = 'flex';
+
         try {
           const q = query(
             collection(db, 'rankings'),
@@ -64,19 +89,39 @@
             limit(5)
           );
           const snapshot = await getDocs(q);
-          const entries = snapshot.docs.map((doc, i) => {
-            const d = doc.data();
-            return `${i + 1}位: ${d.name}  ${d.score}点`;
-          });
-          const message =
-            entries.length > 0
-              ? 'ランキング TOP 5\n\n' + entries.join('\n')
-              : 'まだランキングデータがありません';
-          alert(message);
+          list.innerHTML = '';
+          if (snapshot.empty) {
+            const li = document.createElement('li');
+            li.style.color = '#aaaaff';
+            li.textContent = 'まだランキングデータがありません';
+            list.appendChild(li);
+          } else {
+            snapshot.docs.forEach((doc) => {
+              const d = doc.data();
+              const li   = document.createElement('li');
+              const name  = document.createElement('span');
+              const score = document.createElement('span');
+              name.className  = 'rank-name';
+              score.className = 'rank-score';
+              name.textContent  = d.name;
+              score.textContent = `${d.score}点`;
+              li.appendChild(name);
+              li.appendChild(score);
+              list.appendChild(li);
+            });
+          }
         } catch (e) {
           console.error('ランキングの取得に失敗しました:', e);
+          list.innerHTML = '<li style="color:#ff6666">取得に失敗しました</li>';
         }
       };
+
+      // ランキングボタン・閉じるボタンのイベント設定
+      document.getElementById('ranking-btn').addEventListener('click', window.showRanking);
+      document.getElementById('ranking-close').addEventListener('click', closeRankingModal);
+      rankingModal.addEventListener('click', (e) => {
+        if (e.target === rankingModal) closeRankingModal();
+      });
     </script>
     <script type="module" src="src/main.js"></script>
   </body>
