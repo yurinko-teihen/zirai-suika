@@ -168,41 +168,63 @@ class Main extends Phaser.Scene {
     // Bottom wall: highlight on outer (bottom) side
     drawHBar(FRAME_LEFT - halfBarWidth, FRAME_TOP + FRAME_HEIGHT, FRAME_WIDTH + barW, true);
 
-    // --- Score panel ---
+    // --- Score panel (antique gold style) ---
     const scorePanel = this.add.graphics();
-    scorePanel.fillStyle(0x000000, 0.45);
+    // Background: dark semi-transparent brown matching main frame
+    scorePanel.fillStyle(0x2d1e14, 0.6);
     scorePanel.fillRoundedRect(80, 15, 210, 100, 12);
-    scorePanel.lineStyle(2, 0xccccff, 0.7);
+    // Outer shadow border for depth
+    scorePanel.lineStyle(5, 0x4a3820, 0.7);
     scorePanel.strokeRoundedRect(80, 15, 210, 100, 12);
+    // Main antique gold border
+    scorePanel.lineStyle(3, 0x8b7355, 1);
+    scorePanel.strokeRoundedRect(80, 15, 210, 100, 12);
+    // Inner highlight border for metallic sheen
+    scorePanel.lineStyle(1, 0xc4a882, 0.6);
+    scorePanel.strokeRoundedRect(84, 19, 202, 92, 10);
 
     this.add.text(185, 28, "SCORE", {
       fontSize: "14px",
-      color: "#aaaaff",
+      fontFamily: "Georgia, serif",
+      color: "#f0e68c",
       fontStyle: "bold",
+      shadow: { offsetX: 1, offsetY: 1, color: "#000000", blur: 3, fill: true },
     }).setOrigin(0.5, 0);
 
     this.scoreText = this.add
       .text(185, 80, "0", {
         fontSize: "42px",
-        color: "#ffffff",
+        fontFamily: "Georgia, serif",
+        color: "#f0e68c",
         fontStyle: "bold",
-        stroke: "#000000",
-        strokeThickness: 5,
+        stroke: "#4a3820",
+        strokeThickness: 4,
+        shadow: { offsetX: 1, offsetY: 1, color: "#000000", blur: 4, fill: true },
       })
       .setOrigin(0.5, 0.5);
     this.drawScore();
 
-    // --- Next panel ---
+    // --- Next panel (antique gold style) ---
     const nextPanel = this.add.graphics();
-    nextPanel.fillStyle(0x000000, 0.45);
+    // Background: dark semi-transparent brown matching main frame
+    nextPanel.fillStyle(0x2d1e14, 0.6);
     nextPanel.fillRoundedRect(390, 15, 145, 155, 12);
-    nextPanel.lineStyle(2, 0xccccff, 0.7);
+    // Outer shadow border for depth
+    nextPanel.lineStyle(5, 0x4a3820, 0.7);
     nextPanel.strokeRoundedRect(390, 15, 145, 155, 12);
+    // Main antique gold border
+    nextPanel.lineStyle(3, 0x8b7355, 1);
+    nextPanel.strokeRoundedRect(390, 15, 145, 155, 12);
+    // Inner highlight border for metallic sheen
+    nextPanel.lineStyle(1, 0xc4a882, 0.6);
+    nextPanel.strokeRoundedRect(394, 19, 137, 147, 10);
 
     this.add.text(462, 28, "NEXT", {
       fontSize: "14px",
-      color: "#aaaaff",
+      fontFamily: "Georgia, serif",
+      color: "#f0e68c",
       fontStyle: "bold",
+      shadow: { offsetX: 1, offsetY: 1, color: "#000000", blur: 3, fill: true },
     }).setOrigin(0.5, 0);
 
     this.nextFruitItem = fruits[Math.floor(Math.random() * MAX_INITIAL_FRUIT_INDEX)];
