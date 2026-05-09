@@ -1,4 +1,63 @@
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDYW4OdLesey0JOkqD4BUxseXZbs115oQQ",
+  authDomain: "zirai-suika.firebaseapp.com",
+  projectId: "zirai-suika",
+  storageBucket: "zirai-suika.firebasestorage.app",
+  messagingSenderId: "601134771",
+  appId: "1:601134771:web:33ae660a4e1433b23202c6",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function saveScoreToFirebase(playerName, score) {
+  try {
+    await addDoc(collection(db, "rankings"), {
+      name: playerName,
+      score: score,
+      createdAt: serverTimestamp(),
+    });
+    console.log("スコアを保存しました！");
+  } catch (e) {
+    console.error("保存エラー: ", e);
+  }
+}
+
+async function showRanking() {
+  try {
+    const q = query(
+      collection(db, "rankings"),
+      orderBy("score", "desc"),
+      limit(5)
+    );
+    const snapshot = await getDocs(q);
+    let text = "🏆 ランキング TOP5 🏆\n";
+    let rank = 1;
+    snapshot.forEach((doc) => {
+      const d = doc.data();
+      text += `${rank}位: ${d.name}  ${d.score}点\n`;
+      rank++;
+    });
+    alert(text);
+    console.log(text);
+  } catch (e) {
+    console.error("ランキング取得エラー: ", e);
+  }
+}
+
 const fruits = [
   { name: "fruit01", radius: 28, collisionRadius: 27 },
   { name: "fruit02", radius: 33, collisionRadius: 30 },
@@ -362,6 +421,15 @@ class Main extends Phaser.Scene {
           button.setVisible(true);
           this.dropper.setVisible(false);
           this.ziraiChan.setVisible(false);
+
+          // プレイヤー名を入力させてFirebaseに保存し、ランキングを表示する
+          const finalScore = this.score;
+          const playerName =
+            prompt(
+              `ゲームオーバー！ スコア: ${finalScore}点\nお名前を入力してください:`,
+              "名無し"
+            ) || "名無し";
+          saveScoreToFirebase(playerName, finalScore).then(() => showRanking());
         }
         this.ceilingHitTimer = null;
       });
