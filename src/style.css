@@ -20,18 +20,17 @@ canvas {
   top: 12px;
   right: 12px;
   z-index: 100;
-  padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.55);
-  color: #ccccff;
-  border: 1.5px solid rgba(204, 204, 255, 0.6);
-  border-radius: 6px;
-  font-size: 18px;
-  font-weight: bold;
+  padding: 6px 10px;
+  background: rgba(45, 30, 20, 0.7);
+  color: #f0e68c;
+  border: 2px solid #8b7355;
+  border-radius: 8px;
+  font-size: 20px;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
 }
 #ranking-btn:hover {
-  background: rgba(60, 60, 120, 0.75);
+  background: rgba(80, 55, 35, 0.9);
   transform: scale(1.05);
 }
 
@@ -48,20 +47,22 @@ canvas {
 
 /* モーダル本体 */
 #ranking-content {
-  background: rgba(20, 20, 50, 0.95);
-  border: 2px solid rgba(204, 204, 255, 0.6);
+  background: rgba(45, 30, 20, 0.7);
+  border: 2px solid #8b7355;
   border-radius: 16px;
   padding: 32px 40px;
   min-width: 280px;
   text-align: center;
-  color: #ffffff;
-  box-shadow: 0 0 30px rgba(100, 100, 255, 0.4);
+  color: #f0e68c;
+  font-family: Georgia, serif;
+  box-shadow: 0 0 30px rgba(139, 115, 85, 0.4);
 }
 
 #ranking-title {
   margin: 0 0 20px;
   font-size: 20px;
-  color: #ccccff;
+  font-family: Georgia, serif;
+  color: #f0e68c;
   letter-spacing: 0.05em;
 }
 
@@ -78,31 +79,36 @@ canvas {
   gap: 24px;
   padding: 6px 0;
   font-size: 16px;
-  border-bottom: 1px solid rgba(204, 204, 255, 0.15);
+  font-family: Georgia, serif;
+  color: #f0e68c;
+  border-bottom: 1px solid rgba(139, 115, 85, 0.3);
 }
 #ranking-list li:last-child {
   border-bottom: none;
 }
 
 .rank-name {
-  color: #ddddff;
+  color: #f0e68c;
+  font-family: Georgia, serif;
 }
 .rank-score {
-  color: #ffdd88;
+  color: #f0e68c;
+  font-family: Georgia, serif;
   font-weight: bold;
 }
 
 #ranking-close {
   padding: 8px 28px;
-  background: rgba(80, 80, 160, 0.7);
-  color: #ffffff;
-  border: 1.5px solid rgba(204, 204, 255, 0.5);
+  background: rgba(45, 30, 20, 0.7);
+  color: #f0e68c;
+  border: 2px solid #8b7355;
   border-radius: 8px;
   font-size: 15px;
+  font-family: Georgia, serif;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
 }
 #ranking-close:hover {
-  background: rgba(100, 100, 200, 0.85);
+  background: rgba(80, 55, 35, 0.9);
   transform: scale(1.05);
 }
