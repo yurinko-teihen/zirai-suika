@@ -9,6 +9,75 @@
   </head>
   <body>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js" integrity="sha384-p8ty80jSFxlN0Y9ZlHjOYGzfXmOSD9FkIOdP+Yc3XeiDUfkSmkd7H2bQBvZrt7AC" crossorigin="anonymous"></script>
+    <!-- Firebase SDK v10 (CDN / ESM) -->
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        serverTimestamp,
+        getDocs,
+        query,
+        orderBy,
+        limit,
+      } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDYW4OdLesey0JOkqD4BUxseXZbs115oQQ",
+        authDomain: "zirai-suika.firebaseapp.com",
+        projectId: "zirai-suika",
+        storageBucket: "zirai-suika.firebasestorage.app",
+        messagingSenderId: "601134771",
+        appId: "1:601134771:web:33ae660a4e1433b23202c6",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      /**
+       * ゲーム終了時にスコアを Firestore の rankings コレクションへ保存します。
+       * @param {string} playerName - プレイヤー名
+       * @param {number} score      - 最終スコア
+       */
+      window.saveScoreToFirebase = async function (playerName, score) {
+        try {
+          await addDoc(collection(db, 'rankings'), {
+            name: playerName,
+            score: score,
+            createdAt: serverTimestamp(),
+          });
+          console.log('スコアを保存しました:', playerName, score);
+        } catch (e) {
+          console.error('スコアの保存に失敗しました:', e);
+        }
+      };
+
+      /**
+       * Firestore から上位 5 件のランキングを取得してアラートで表示します。
+       */
+      window.showRanking = async function () {
+        try {
+          const q = query(
+            collection(db, 'rankings'),
+            orderBy('score', 'desc'),
+            limit(5)
+          );
+          const snapshot = await getDocs(q);
+          const entries = snapshot.docs.map((doc, i) => {
+            const d = doc.data();
+            return `${i + 1}位: ${d.name}  ${d.score}点`;
+          });
+          const message =
+            entries.length > 0
+              ? 'ランキング TOP 5\n\n' + entries.join('\n')
+              : 'まだランキングデータがありません';
+          alert(message);
+        } catch (e) {
+          console.error('ランキングの取得に失敗しました:', e);
+        }
+      };
+    </script>
     <script type="module" src="src/main.js"></script>
   </body>
 </html>

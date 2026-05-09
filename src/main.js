@@ -362,6 +362,25 @@ class Main extends Phaser.Scene {
           button.setVisible(true);
           this.dropper.setVisible(false);
           this.ziraiChan.setVisible(false);
+
+          const rawName =
+            prompt(
+              `ゲームオーバー！\nスコア: ${this.score}点\n\nランキングに登録する名前を入力してください:`
+            )?.trim() ?? '';
+          const playerName = rawName.slice(0, 20) || 'Anonymous';
+
+          if (typeof window.saveScoreToFirebase === 'function') {
+            window
+              .saveScoreToFirebase(playerName, this.score)
+              .then(() => {
+                if (typeof window.showRanking === 'function') {
+                  window.showRanking();
+                }
+              })
+              .catch((e) => {
+                console.error('スコアの保存中にエラーが発生しました:', e);
+              });
+          }
         }
         this.ceilingHitTimer = null;
       });
