@@ -394,7 +394,6 @@ new Phaser.Game({
   scene: [Main],
   width: 600,
   height: 1000,
-  parent: "game-container",
   scale: {
     mode: Phaser.Scale.ScaleModes.FIT,
   },
