@@ -22,6 +22,12 @@ const FRAME_TOP = 175;
 const FRAME_WIDTH = 470;
 const FRAME_HEIGHT = 798;
 
+const PANEL_BG_COLOR = 0x2d1e14;
+const PANEL_BG_OPACITY = 0.7;
+const PANEL_SHADOW_COLOR = 0x4a3820;
+const PANEL_SHADOW_OPACITY = 0.7;
+const PANEL_BORDER_COLOR = 0x8b7355;
+
 class Main extends Phaser.Scene {
   score = 0;
   gameOver = false;
@@ -161,6 +167,8 @@ class Main extends Phaser.Scene {
       frameGraphics.fillRect(x, highlightBottom ? cy - halfBarWidth : cy + halfBarWidth - edgeW, w, edgeW);
     };
 
+    // Top wall: highlight on outer (top) side
+    drawHBar(FRAME_LEFT - halfBarWidth, FRAME_TOP, FRAME_WIDTH + barW, false);
     // Left wall: highlight on outer (left) side
     drawVBar(FRAME_LEFT, FRAME_TOP, FRAME_HEIGHT + halfBarWidth, true);
     // Right wall: highlight on outer (right) side
@@ -170,18 +178,12 @@ class Main extends Phaser.Scene {
 
     // --- Score panel (antique gold style) ---
     const scorePanel = this.add.graphics();
-    // Background: dark semi-transparent brown matching main frame
-    scorePanel.fillStyle(0x2d1e14, 0.6);
+    scorePanel.fillStyle(PANEL_BG_COLOR, PANEL_BG_OPACITY);
     scorePanel.fillRoundedRect(80, 15, 210, 100, 12);
-    // Outer shadow border for depth
-    scorePanel.lineStyle(5, 0x4a3820, 0.7);
+    scorePanel.lineStyle(4, PANEL_SHADOW_COLOR, PANEL_SHADOW_OPACITY);
     scorePanel.strokeRoundedRect(80, 15, 210, 100, 12);
-    // Main antique gold border
-    scorePanel.lineStyle(3, 0x8b7355, 1);
+    scorePanel.lineStyle(2, PANEL_BORDER_COLOR, 1);
     scorePanel.strokeRoundedRect(80, 15, 210, 100, 12);
-    // Inner highlight border for metallic sheen
-    scorePanel.lineStyle(1, 0xc4a882, 0.6);
-    scorePanel.strokeRoundedRect(84, 19, 202, 92, 10);
 
     this.add.text(185, 28, "SCORE", {
       fontSize: "14px",
@@ -206,18 +208,12 @@ class Main extends Phaser.Scene {
 
     // --- Next panel (antique gold style) ---
     const nextPanel = this.add.graphics();
-    // Background: dark semi-transparent brown matching main frame
-    nextPanel.fillStyle(0x2d1e14, 0.6);
+    nextPanel.fillStyle(PANEL_BG_COLOR, PANEL_BG_OPACITY);
     nextPanel.fillRoundedRect(390, 15, 145, 155, 12);
-    // Outer shadow border for depth
-    nextPanel.lineStyle(5, 0x4a3820, 0.7);
+    nextPanel.lineStyle(4, PANEL_SHADOW_COLOR, PANEL_SHADOW_OPACITY);
     nextPanel.strokeRoundedRect(390, 15, 145, 155, 12);
-    // Main antique gold border
-    nextPanel.lineStyle(3, 0x8b7355, 1);
+    nextPanel.lineStyle(2, PANEL_BORDER_COLOR, 1);
     nextPanel.strokeRoundedRect(390, 15, 145, 155, 12);
-    // Inner highlight border for metallic sheen
-    nextPanel.lineStyle(1, 0xc4a882, 0.6);
-    nextPanel.strokeRoundedRect(394, 19, 137, 147, 10);
 
     this.add.text(462, 28, "NEXT", {
       fontSize: "14px",
