@@ -54,6 +54,8 @@ class Main extends Phaser.Scene {
       progressBar.destroy();
       progressBox.destroy();
       loadingText.destroy();
+      const rankingBtn = document.getElementById("ranking-btn");
+      if (rankingBtn) rankingBtn.style.display = "block";
     });
 
     this.load.path = "public/";
