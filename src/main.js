@@ -126,13 +126,47 @@ class Main extends Phaser.Scene {
   }
 
   create() {
-    // --- Game frame (canvas border) ---
-    const graphics = this.add.graphics();
-    graphics.fillStyle(0x000000, 0.15);
-    graphics.fillRect(FRAME_LEFT, FRAME_TOP, FRAME_WIDTH, FRAME_HEIGHT);
-    graphics.lineStyle(3, 0xccccff, 0.8);
-    graphics.strokeRect(FRAME_LEFT, FRAME_TOP, FRAME_WIDTH, FRAME_HEIGHT);
-    graphics.setDepth(-2);
+    // --- Game frame (antique gold container) ---
+    const frameGraphics = this.add.graphics();
+    frameGraphics.setDepth(-2);
+
+    // Inner background: dark semi-transparent brown for depth / container feel
+    frameGraphics.fillStyle(0x2d1e14, 0.4);
+    frameGraphics.fillRect(FRAME_LEFT, FRAME_TOP, FRAME_WIDTH, FRAME_HEIGHT);
+
+    // Metallic antique gold bars with 3D highlight/shadow effect
+    const barW = 8;
+    const halfBarWidth = barW / 2;
+    const edgeW = 2; // width of highlight / shadow strips
+
+    // Vertical metallic bar helper
+    // highlightLeft: true → highlight on left edge (outer), shadow on right edge (inner)
+    const drawVBar = (cx, y, h, highlightLeft) => {
+      frameGraphics.fillStyle(0x8b7355, 1);
+      frameGraphics.fillRect(cx - halfBarWidth, y, barW, h);
+      frameGraphics.fillStyle(0xc4a882, 0.85);
+      frameGraphics.fillRect(highlightLeft ? cx - halfBarWidth : cx + halfBarWidth - edgeW, y, edgeW, h);
+      frameGraphics.fillStyle(0x4a3820, 0.85);
+      frameGraphics.fillRect(highlightLeft ? cx + halfBarWidth - edgeW : cx - halfBarWidth, y, edgeW, h);
+    };
+
+    // Horizontal metallic bar helper
+    // highlightBottom: true → highlight on bottom edge (outer), shadow on top edge (inner)
+    const drawHBar = (x, cy, w, highlightBottom) => {
+      frameGraphics.fillStyle(0x8b7355, 1);
+      frameGraphics.fillRect(x, cy - halfBarWidth, w, barW);
+      frameGraphics.fillStyle(0xc4a882, 0.85);
+      frameGraphics.fillRect(x, highlightBottom ? cy + halfBarWidth - edgeW : cy - halfBarWidth, w, edgeW);
+      frameGraphics.fillStyle(0x4a3820, 0.85);
+      frameGraphics.fillRect(x, highlightBottom ? cy - halfBarWidth : cy + halfBarWidth - edgeW, w, edgeW);
+    };
+
+    // Left wall: highlight on outer (left) side
+    drawVBar(FRAME_LEFT, FRAME_TOP, FRAME_HEIGHT + halfBarWidth, true);
+    // Right wall: highlight on outer (right) side
+    drawVBar(FRAME_LEFT + FRAME_WIDTH, FRAME_TOP, FRAME_HEIGHT + halfBarWidth, false);
+    // Bottom wall: highlight on outer (bottom) side
+    drawHBar(FRAME_LEFT - halfBarWidth, FRAME_TOP + FRAME_HEIGHT, FRAME_WIDTH + barW, true);
 
     // --- Score panel ---
     const scorePanel = this.add.graphics();
