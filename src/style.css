@@ -19,8 +19,11 @@ canvas {
 #game-container {
   position: relative;
 
+  /* 額縁の枠線幅をカスタムプロパティで一元管理 */
+  --frame-border-width: 8px;
+
   /* 金古美（アンティークゴールド）をイメージした二重枠線 */
-  border: 8px double #8b7355;
+  border: var(--frame-border-width) double #8b7355;
   border-radius: 24px;
 
   /*
@@ -59,7 +62,7 @@ canvas {
 #game-container::after {
   content: "";
   position: absolute;
-  inset: -8px;          /* border の外側まで広げる */
+  inset: calc(var(--frame-border-width) * -1);  /* border の外側まで広げる */
   border-radius: 24px;
   pointer-events: none;
   z-index: 10;
