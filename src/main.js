@@ -20,7 +20,7 @@ const fruits = [
   { name: "fruit05", radius: 62, collisionRadius: 59, collisionPolygonSides: 10 },
   { name: "fruit06", radius: 66, collisionRadius: 66, collisionPolygonSides: 12 },
   { name: "fruit07", radius: 76, collisionRadius: 76, collisionPolygonSides: 12 },
-  { name: "fruit8", radius: 85, collisionRadius: 85, collisionPolygonSides: 14 },
+  { name: "fruit08", radius: 85, collisionRadius: 85, collisionPolygonSides: 14 },
   { name: "fruit09", radius: 95, collisionRadius: 91, collisionPolygonSides: 14 },
   { name: "fruit10", radius: 104, collisionRadius: 103, collisionPolygonSides: 16 },
   { name: "fruit11", radius: 114, collisionRadius: 114, collisionPolygonSides: 16 },
