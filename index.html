@@ -15,6 +15,10 @@
     <div id="ranking-modal">
       <div id="ranking-content">
         <h2 id="ranking-title">ランキング TOP 5</h2>
+        <div id="ranking-tabs">
+          <button class="ranking-tab active" data-tab="total">総合</button>
+          <button class="ranking-tab" data-tab="daily">デイリー</button>
+        </div>
         <ol id="ranking-list"></ol>
         <button id="ranking-close">戻る</button>
       </div>
@@ -33,6 +37,8 @@
         query,
         orderBy,
         limit,
+        where,
+        Timestamp,
       } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
       const firebaseConfig = {
@@ -73,22 +79,43 @@
 
       /**
        * Firestore から上位 5 件のランキングを取得してモーダルで表示します。
+       * @param {'total'|'daily'} [tab='total'] - 'total': 総合, 'daily': デイリー
        */
-      window.showRanking = async function () {
+      window.showRanking = async function (tab = 'total') {
         const list  = document.getElementById('ranking-list');
         const title = document.getElementById('ranking-title');
 
+        // タブの active 状態を更新
+        document.querySelectorAll('.ranking-tab').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.tab === tab);
+        });
+
+        const isDaily = tab === 'daily';
+        title.textContent = isDaily ? 'デイリーランキング TOP 5' : '総合ランキング TOP 5';
         list.innerHTML = '<li style="color:#aaaaff">読み込み中...</li>';
-        title.textContent = 'ランキング TOP 5';
         rankingModal.style.display = 'flex';
 
         try {
-          const q = query(
-            collection(db, 'rankings'),
-            orderBy('score', 'desc'),
-            limit(5)
-          );
-          const snapshot = await getDocs(q);
+          let snapshot;
+          if (isDaily) {
+            const startOfToday = new Date();
+            startOfToday.setHours(0, 0, 0, 0);
+            const q = query(
+              collection(db, 'rankings'),
+              where('createdAt', '>=', Timestamp.fromDate(startOfToday)),
+              orderBy('createdAt', 'desc'),
+              limit(50)
+            );
+            snapshot = await getDocs(q);
+          } else {
+            const q = query(
+              collection(db, 'rankings'),
+              orderBy('score', 'desc'),
+              limit(5)
+            );
+            snapshot = await getDocs(q);
+          }
+
           list.innerHTML = '';
           if (snapshot.empty) {
             const li = document.createElement('li');
@@ -96,7 +123,11 @@
             li.textContent = 'まだランキングデータがありません';
             list.appendChild(li);
           } else {
-            snapshot.docs.forEach((doc) => {
+            let docs = snapshot.docs;
+            if (isDaily) {
+              docs = docs.sort((a, b) => b.data().score - a.data().score).slice(0, 5);
+            }
+            docs.forEach((doc) => {
               const d = doc.data();
               const li   = document.createElement('li');
               const name  = document.createElement('span');
@@ -116,11 +147,14 @@
         }
       };
 
-      // ランキングボタン・閉じるボタンのイベント設定
-      document.getElementById('ranking-btn').addEventListener('click', window.showRanking);
+      // ランキングボタン・閉じるボタン・タブのイベント設定
+      document.getElementById('ranking-btn').addEventListener('click', () => window.showRanking('total'));
       document.getElementById('ranking-close').addEventListener('click', closeRankingModal);
       rankingModal.addEventListener('click', (e) => {
         if (e.target === rankingModal) closeRankingModal();
+      });
+      document.querySelectorAll('.ranking-tab').forEach((btn) => {
+        btn.addEventListener('click', () => window.showRanking(btn.dataset.tab));
       });
     </script>
     <script type="module" src="src/main.js"></script>
