@@ -1,11 +1,15 @@
 
-const createRegularPolygonPath = (radius, sides) => {
+const createRegularPolygonVertices = (radius, sides) => {
+  const TWO_PI = Math.PI * 2;
   const points = [];
   for (let i = 0; i < sides; i++) {
-    const angle = -Math.PI / 2 + (Math.PI * 2 * i) / sides;
-    points.push(`${Math.cos(angle) * radius} ${Math.sin(angle) * radius}`);
+    const angle = -Math.PI / 2 + (TWO_PI * i) / sides;
+    points.push({
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius,
+    });
   }
-  return points.join(" ");
+  return points;
 };
 
 const fruits = [
@@ -22,7 +26,7 @@ const fruits = [
   { name: "fruit11", radius: 114, collisionRadius: 114, collisionPolygonSides: 16 },
 ].map((fruit) => ({
   ...fruit,
-  collisionPolygonPath: createRegularPolygonPath(
+  collisionPolygonVertices: createRegularPolygonVertices(
     fruit.collisionRadius,
     fruit.collisionPolygonSides
   ),
@@ -137,7 +141,7 @@ class Main extends Phaser.Scene {
       .setDisplaySize(fruit.radius * 2, fruit.radius * 2)
       .setBody({
         type: "fromVerts",
-        verts: fruit.collisionPolygonPath,
+        verts: fruit.collisionPolygonVertices,
       })
       .setFriction(0.005)
       .setBounce(0.2)
