@@ -97,6 +97,34 @@ canvas {
   font-weight: bold;
 }
 
+#ranking-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ranking-tab {
+  padding: 6px 20px;
+  background: rgba(45, 30, 20, 0.5);
+  color: #f0e68c;
+  border: 2px solid #8b7355;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: Georgia, serif;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.ranking-tab:hover {
+  background: rgba(80, 55, 35, 0.9);
+  transform: scale(1.05);
+}
+.ranking-tab.active {
+  background: rgba(139, 115, 85, 0.6);
+  border-color: #f0e68c;
+  font-weight: bold;
+}
+
 #ranking-close {
   padding: 8px 28px;
   background: rgba(45, 30, 20, 0.7);
