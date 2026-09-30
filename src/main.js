@@ -47,11 +47,34 @@ const PANEL_SHADOW_COLOR = 0x4a3820;
 const PANEL_SHADOW_OPACITY = 0.7;
 const PANEL_BORDER_COLOR = 0x8b7355;
 
+const CHROMA_KEY_FRAGMENT_SHADER = `
+precision mediump float;
+uniform sampler2D uMainSampler;
+varying vec2 outTexCoord;
+void main () {
+  vec4 color = texture2D(uMainSampler, outTexCoord);
+  float greenDominance = color.g - max(color.r, color.b);
+  float alpha = 1.0 - smoothstep(0.12, 0.32, greenDominance);
+  float spill = clamp(greenDominance * (1.0 - alpha) * 4.0, 0.0, 1.0);
+  color.g = mix(color.g, max(color.r, color.b), spill);
+  gl_FragColor = vec4(color.rgb * alpha, color.a * alpha);
+}`;
+
+let chromaKeyPipelineRegistered = false;
+
+class ChromaKeyPipeline extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline {
+  constructor(game) {
+    super({ game, fragShader: CHROMA_KEY_FRAGMENT_SHADER });
+  }
+}
+
 class Main extends Phaser.Scene {
   score = 0;
   gameOver = false;
   nextFruitItem = null;
   ceilingHitTimer = null;
+  ziraiChan = null;
+  ziraiChanIdle = null;
 
   preload() {
     const { width, height } = this.cameras.main;
@@ -85,7 +108,8 @@ class Main extends Phaser.Scene {
 
     this.load.path = "public/";
     this.load.image("newgame", "New Game Button.png");
-    this.load.image("zirai_chan", "zirai_chan.png");
+    this.load.image("zirai_idle", "zirai-idle.png");
+    this.load.video("zirai_video", "zirai-loop.mp4", true);
 
     for (const fruit of fruits) {
       this.load.image(`${fruit.name}`, `${fruit.name}.png`);
@@ -102,7 +126,8 @@ class Main extends Phaser.Scene {
       .setDisplaySize(fruit.radius * 2, fruit.radius * 2)
       .setY(dropperY);
     // Position zirai_chan so its bottom edge aligns with the fruit dropper (fruit at lower-left of zirai_chan)
-    this.ziraiChan.setY(dropperY - ZIRAI_CHAN_SIZE / 2);
+    this.ziraiChanIdle?.setY(dropperY - ZIRAI_CHAN_SIZE / 2);
+    this.ziraiChan?.setY(dropperY - ZIRAI_CHAN_SIZE / 2);
     this.setDropperX(this.input.activePointer.x);
 
     this.group.getChildren().forEach((gameObject) => {
@@ -131,7 +156,8 @@ class Main extends Phaser.Scene {
     }
     this.dropper.setX(x);
     // Position zirai_chan so its left edge aligns with the dropper (fruit at lower-left of zirai_chan)
-    this.ziraiChan.setX(x + ZIRAI_CHAN_SIZE / 2);
+    this.ziraiChanIdle?.setX(x + ZIRAI_CHAN_SIZE / 2);
+    this.ziraiChan?.setX(x + ZIRAI_CHAN_SIZE / 2);
   }
 
   addFruit(x, y, fruit) {
@@ -330,9 +356,33 @@ class Main extends Phaser.Scene {
       },
     });
 
-    this.ziraiChan = this.add
-      .image(0, 0, "zirai_chan")
+    this.ziraiChanIdle = this.add
+      .image(0, 0, "zirai_idle")
       .setDisplaySize(ZIRAI_CHAN_SIZE, ZIRAI_CHAN_SIZE);
+    this.ziraiChan = null;
+    const pipelineManager = this.game.renderer.pipelines;
+    if (pipelineManager) {
+      if (!chromaKeyPipelineRegistered) {
+        pipelineManager.addPostPipeline("ChromaKeyPipeline", ChromaKeyPipeline);
+        chromaKeyPipelineRegistered = true;
+      }
+
+      this.ziraiChan = this.add
+        .video(0, 0, "zirai_video")
+        .setPostPipeline(ChromaKeyPipeline)
+        .setVisible(false);
+      this.ziraiChan.once(Phaser.GameObjects.Events.VIDEO_CREATED, () => {
+        this.ziraiChan.setDisplaySize(ZIRAI_CHAN_SIZE, ZIRAI_CHAN_SIZE);
+      });
+      this.ziraiChan.on(Phaser.GameObjects.Events.VIDEO_COMPLETE, () => {
+        this.ziraiChan.setCurrentTime(0).pause().setVisible(false);
+        this.ziraiChanIdle.setVisible(!this.gameOver);
+      });
+      this.ziraiChan.on(Phaser.GameObjects.Events.VIDEO_ERROR, () => {
+        this.ziraiChan.setVisible(false);
+        this.ziraiChanIdle.setVisible(!this.gameOver);
+      });
+    }
 
     this.updateDropper(fruits[0]);
 
@@ -363,10 +413,17 @@ class Main extends Phaser.Scene {
       }
 
       this.dropper.setVisible(false);
+      if (this.ziraiChan) {
+        this.ziraiChanIdle.setVisible(false);
+        this.ziraiChan.setVisible(true);
+        if (this.ziraiChan.isPlaying()) {
+          this.ziraiChan.setCurrentTime(0);
+        } else {
+          this.ziraiChan.setCurrentTime(0).play(false);
+        }
+      }
       this.time.delayedCall(500, () => {
-        const show = !this.gameOver;
-        this.dropper.setVisible(show);
-        this.ziraiChan.setVisible(show);
+        this.dropper.setVisible(!this.gameOver);
       });
 
       const currentFruit = fruits.find(
@@ -443,7 +500,8 @@ class Main extends Phaser.Scene {
           this.gameOver = true;
           button.setVisible(true);
           this.dropper.setVisible(false);
-          this.ziraiChan.setVisible(false);
+          this.ziraiChan?.setVisible(false).pause();
+          this.ziraiChanIdle?.setVisible(false);
 
           const rawName =
             prompt(
